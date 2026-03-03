@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  # Base de données MongoDB
+  mongo:
+    image: mongo:7
+    container_name: eventflow-mongo
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+  # Backend Node.js / Express
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: eventflow-server
+    restart: always
+    ports:
+      - "5000:5000"
+    environment:
+      - PORT=5000
+      - MONGODB_URI=mongodb://mongo:27017/eventflow
+      - JWT_SECRET=eventflow_super_secret_key_2024
+      - JWT_EXPIRES_IN=24h
+    depends_on:
+      - mongo
+
+  # Frontend Vue.js (Nginx)
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: eventflow-client
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      - server
+
+volumes:
+  mongo-data:
