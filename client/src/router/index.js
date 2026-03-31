@@ -21,6 +21,18 @@ const routes = [
     meta: { requiresAuth: true },
   },
   {
+    path: '/calendar',
+    name: 'Calendar',
+    component: () => import('../views/CalendarView.vue'),
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/map',
+    name: 'Map',
+    component: () => import('../views/MapView.vue'),
+    meta: { requiresAuth: true },
+  },
+  {
     path: '/events/create',
     name: 'CreateEvent',
     component: () => import('../views/CreateEventView.vue'),
@@ -39,10 +51,27 @@ const routes = [
     meta: { requiresAuth: true, roles: ['organisateur', 'admin'] },
   },
   {
+    path: '/events/:id/scan',
+    name: 'ScanQR',
+    component: () => import('../views/ScanQRView.vue'),
+    meta: { requiresAuth: true, roles: ['organisateur', 'admin'] },
+  },
+  {
     path: '/admin',
     name: 'Admin',
     component: () => import('../views/AdminView.vue'),
     meta: { requiresAuth: true, roles: ['admin'] },
+  },
+  {
+    path: '/my-data',
+    name: 'MyData',
+    component: () => import('../views/MyDataView.vue'),
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/privacy',
+    name: 'Privacy',
+    component: () => import('../views/PrivacyView.vue'),
   },
 ]
 

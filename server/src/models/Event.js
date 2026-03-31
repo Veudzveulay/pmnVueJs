@@ -31,6 +31,10 @@ const eventSchema = new mongoose.Schema(
         ref: 'User',
       },
     ],
+    coordinates: {
+      lat: { type: Number, default: null },
+      lng: { type: Number, default: null },
+    },
     organizer: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',

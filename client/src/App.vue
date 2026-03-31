@@ -1,7 +1,7 @@
 <script setup>
 import { useAuthStore } from './stores/auth'
 import Navbar from './components/Navbar.vue'
-import Notification from './components/Notification.vue'
+import CookieBanner from './components/CookieBanner.vue'
 
 const authStore = useAuthStore()
 </script>
@@ -9,7 +9,7 @@ const authStore = useAuthStore()
 <template>
   <div id="app">
     <Navbar v-if="authStore.isAuthenticated" />
-    <Notification />
     <router-view />
+    <CookieBanner />
   </div>
 </template>

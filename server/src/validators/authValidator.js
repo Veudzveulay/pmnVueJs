@@ -17,6 +17,10 @@ const registerSchema = Joi.object({
   role: Joi.string().valid('organisateur', 'participant').default('participant').messages({
     'any.only': 'Le rôle doit être "organisateur" ou "participant".',
   }),
+  gdprConsent: Joi.boolean().valid(true).required().messages({
+    'any.only': 'Vous devez accepter la politique de confidentialité.',
+    'any.required': 'Le consentement RGPD est requis.',
+  }),
 });
 
 const loginSchema = Joi.object({

@@ -60,8 +60,9 @@ async function toggleRegistration() {
 
     <p class="event-card-desc">{{ event.description }}</p>
 
+    <div class="event-card-location" :title="event.location">{{ event.location }}</div>
+
     <div class="event-card-meta">
-      <span>{{ event.location }}</span>
       <span>Par {{ event.organizer?.name }}</span>
       <span :class="['spots-badge', spotsLeft > 0 ? 'spots-available' : 'spots-full']">
         {{ spotsLeft > 0 ? `${spotsLeft} place(s)` : 'Complet' }}
@@ -74,7 +75,7 @@ async function toggleRegistration() {
       </button>
 
       <button
-        v-if="authStore.isAuthenticated && !isOwner"
+        v-if="authStore.isAuthenticated && !isOwner && authStore.isParticipant"
         class="btn btn-sm"
         :class="isRegistered ? 'btn-danger' : 'btn-success'"
         :disabled="!isRegistered && spotsLeft <= 0"
@@ -93,3 +94,14 @@ async function toggleRegistration() {
     </div>
   </div>
 </template>
+
+<style scoped>
+.event-card-location {
+  font-size: 0.85rem;
+  color: var(--gray);
+  margin-bottom: 0.5rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+</style>

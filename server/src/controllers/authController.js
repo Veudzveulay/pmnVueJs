@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const ConsentLog = require('../models/ConsentLog');
 const { registerSchema, loginSchema } = require('../validators/authValidator');
 
 // Générer un token JWT
@@ -19,14 +20,35 @@ exports.register = async (req, res) => {
       return res.status(400).json({ message: error.details[0].message });
     }
 
-    const { name, email, password, role } = req.body;
+    const { name, email, password, role, gdprConsent } = req.body;
+
+    // Vérification du consentement RGPD
+    if (!gdprConsent) {
+      return res.status(400).json({ message: 'Vous devez accepter la politique de confidentialité pour vous inscrire.' });
+    }
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ message: 'Cet email est déjà utilisé.' });
     }
 
-    const user = await User.create({ name, email, password, role });
+    const user = await User.create({
+      name,
+      email,
+      password,
+      role,
+      consentDate: new Date(),
+      consentVersion: '1.0',
+    });
+
+    // Log du consentement (RGPD)
+    const clientIp = req.headers['x-forwarded-for'] || req.connection.remoteAddress || req.ip || '0.0.0.0';
+    await ConsentLog.create({
+      user: user._id,
+      action: 'consent_given',
+      ipAddress: clientIp,
+      details: 'Consentement donné lors de l\'inscription (version 1.0).',
+    });
 
     const token = generateToken(user);
 
@@ -37,6 +59,8 @@ exports.register = async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
+        consentDate: user.consentDate,
+        consentVersion: user.consentVersion,
       },
     });
   } catch (error) {
@@ -73,6 +97,8 @@ exports.login = async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
+        consentDate: user.consentDate,
+        consentVersion: user.consentVersion,
       },
     });
   } catch (error) {
@@ -88,7 +114,12 @@ exports.getMe = async (req, res) => {
         id: req.user._id,
         name: req.user.name,
         email: req.user.email,
+        phone: req.user.phone,
         role: req.user.role,
+        consentDate: req.user.consentDate,
+        consentVersion: req.user.consentVersion,
+        isAnonymized: req.user.isAnonymized,
+        createdAt: req.user.createdAt,
       },
     });
   } catch (error) {

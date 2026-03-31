@@ -1,5 +1,10 @@
 const Joi = require('joi');
 
+const coordinatesSchema = Joi.object({
+  lat: Joi.number().min(-90).max(90).required(),
+  lng: Joi.number().min(-180).max(180).required(),
+});
+
 const eventSchema = Joi.object({
   title: Joi.string().min(3).max(100).required().messages({
     'string.min': 'Le titre doit contenir au moins 3 caractères.',
@@ -22,6 +27,7 @@ const eventSchema = Joi.object({
     'number.min': 'Il faut au moins 1 place.',
     'any.required': 'Le nombre de places est requis.',
   }),
+  coordinates: coordinatesSchema.optional().allow(null),
 });
 
 const eventUpdateSchema = Joi.object({
@@ -30,6 +36,7 @@ const eventUpdateSchema = Joi.object({
   date: Joi.date().iso().greater('now'),
   location: Joi.string().min(2).max(200),
   maxParticipants: Joi.number().integer().min(1),
+  coordinates: coordinatesSchema.optional().allow(null),
 }).min(1);
 
 module.exports = { eventSchema, eventUpdateSchema };

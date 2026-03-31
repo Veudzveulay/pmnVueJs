@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useEventStore } from '../stores/events'
+import LocationPicker from '../components/LocationPicker.vue'
 
 const router = useRouter()
 const eventStore = useEventStore()
@@ -12,8 +13,13 @@ const form = ref({
   date: '',
   location: '',
   maxParticipants: 10,
+  coordinates: null,
 })
 const errorMsg = ref('')
+
+function onLocationUpdate(address) {
+  form.value.location = address
+}
 
 async function handleSubmit() {
   errorMsg.value = ''
@@ -28,7 +34,7 @@ async function handleSubmit() {
 
 <template>
   <div class="container page">
-    <div style="max-width: 600px; margin: 0 auto;">
+    <div style="max-width: 700px; margin: 0 auto;">
       <button class="btn btn-sm btn-outline" style="margin-bottom: 1.5rem;" @click="router.push('/')">
         &larr; Retour
       </button>
@@ -73,13 +79,18 @@ async function handleSubmit() {
           </div>
 
           <div class="form-group">
-            <label for="location">Lieu</label>
+            <label>Lieu</label>
+            <LocationPicker
+              v-model="form.coordinates"
+              :location="form.location"
+              @update:location="onLocationUpdate"
+            />
             <input
-              id="location"
               v-model="form.location"
               type="text"
-              placeholder="Lieu de l'événement"
+              placeholder="Ou saisissez l'adresse manuellement"
               required
+              style="margin-top: 0.5rem;"
             />
           </div>
 

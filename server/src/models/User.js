@@ -26,6 +26,24 @@ const userSchema = new mongoose.Schema(
       enum: ['admin', 'organisateur', 'participant'],
       default: 'participant',
     },
+    // Champs RGPD
+    phone: {
+      type: String,
+      default: null,
+      trim: true,
+    },
+    consentDate: {
+      type: Date,
+      default: null,
+    },
+    consentVersion: {
+      type: String,
+      default: null,
+    },
+    isAnonymized: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );
